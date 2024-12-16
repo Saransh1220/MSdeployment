@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  books-service:
+    build:
+      context: ./books-service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      NODE_ENV: production
+    networks:
+      - loopback-network
+
+  authors-service:
+    build:
+      context: ./authors-service
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000"
+    environment:
+      NODE_ENV: production
+    networks:
+      - loopback-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Expose API Gateway on host port 3000
+    depends_on:
+      - books-service
+      - authors-service
+    networks:
+      - loopback-network
+
+networks:
+  loopback-network:
+    driver: bridge
